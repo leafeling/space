@@ -1,0 +1,82 @@
+[gd_scene load_steps=8 format=3 uid="uid://b1pkka63thor7"]
+
+[ext_resource type="PackedScene" uid="uid://dv7x6lnl4kske" path="res://obj/ship.tscn" id="1_vpcsx"]
+[ext_resource type="Script" path="res://src/body/Star.cs" id="2_1vvln"]
+
+[sub_resource type="Environment" id="Environment_jdj2e"]
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.01
+reflected_light_source = 1
+fog_light_color = Color(0.624935, 0.657231, 0.707977, 1)
+fog_light_energy = 16.0
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.001
+volumetric_fog_albedo = Color(0.152941, 0, 0.160784, 1)
+volumetric_fog_ambient_inject = 0.55
+volumetric_fog_temporal_reprojection_enabled = false
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_f4q26"]
+radius = 500.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_osg54"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 1e+07
+
+[sub_resource type="SphereMesh" id="SphereMesh_xgetb"]
+material = SubResource("StandardMaterial3D_osg54")
+radius = 500.0
+height = 1000.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_kn3ra"]
+radius = 500.0
+height = 1000.0
+
+[node name="main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_jdj2e")
+
+[node name="Ship" parent="." instance=ExtResource("1_vpcsx")]
+linear_velocity = Vector3(0, 0, 0)
+linear_damp_mode = 0
+linear_damp = 1.0
+angular_damp = 1.0
+
+[node name="Camera3D" type="Camera3D" parent="Ship"]
+
+[node name="Star" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2457.24)
+script = ExtResource("2_1vvln")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Star"]
+light_energy = 50.0
+light_indirect_energy = 50.0
+light_volumetric_fog_energy = 4.525
+omni_range = 5e+08
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Star"]
+shape = SubResource("SphereShape3D_f4q26")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Star"]
+mesh = SubResource("SphereMesh_xgetb")
+
+[node name="Star2" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -977.4, 864.055, -2457.24)
+script = ExtResource("2_1vvln")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Star2"]
+light_energy = 100.0
+light_indirect_energy = 50.0
+light_volumetric_fog_energy = 16.0
+omni_range = 5e+08
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Star2"]
+shape = SubResource("SphereShape3D_f4q26")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Star2"]
+mesh = SubResource("SphereMesh_kn3ra")
+
+[connection signal="body_entered" from="Star" to="Star" method="_on_body_entered"]
+[connection signal="body_entered" from="Star2" to="Star2" method="_on_body_entered"]
